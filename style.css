@@ -523,7 +523,7 @@
 }
 
 /* ── STREAMLIT OVERRIDES ── */
-.stFileUploader { display: none !important; }
+
 div[data-testid="stFileUploadDropzone"] {
     background: #fff !important;
     border: 2px dashed rgba(15,61,34,0.2) !important;
