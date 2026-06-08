@@ -214,22 +214,32 @@ html("""
 col1, col2 = st.columns([1, 1], gap="large")
 
 with col1:
-    uploaded = st.file_uploader(
-        "Upload leaf image",
-        type=["jpg","jpeg","png"],
-        label_visibility="collapsed"
-    )
-    if uploaded:
-        img = Image.open(uploaded).convert("RGB")
-        st.image(img, use_column_width=True)
-    else:
+    # 1. Create a temporary check to see if a file has already been uploaded in the session
+    # This prevents the NameError while letting us control the HTML visibility
+    has_file = st.session_state.get("file_uploader_key")
+    
+    if not has_file:
         html("""
-        <div class="upload-zone">
+        <div class="upload-zone" style="margin-bottom: 15px;">
           <div class="upload-icon">🍃</div>
           <div class="upload-title">Drop your leaf image here</div>
           <div class="upload-sub">JPG or PNG · Clear photo in natural light</div>
         </div>
         """)
+    
+    # 2. Render the interactive uploader tool cleanly below your graphic block
+    uploaded = st.file_uploader(
+        "Select leaf specimen image:",
+        type=["jpg", "jpeg", "png"],
+        label_visibility="visible",
+        key="file_uploader_key" # Using a key syncs it up with our session check above
+    )
+    
+    # 3. Handle image rendering if a user successfully inputs a leaf photo
+    if uploaded:
+        st.success("✓ Image uploaded successfully!")
+        img = Image.open(uploaded).convert("RGB")
+        st.image(img, use_column_width=True, caption="Uploaded Leaf Preview")
 
 with col2:
     if uploaded:
